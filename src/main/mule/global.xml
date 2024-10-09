@@ -46,7 +46,24 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		doc:id="be420b27-51d2-4ed8-858d-53700beba98f"
 		defaultErrorHandler-ref="globalError_Handler" />
 	<error-handler name="globalError_Handler" doc:id="06ba1ded-9915-49e3-ab31-c7518b86d690" >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ee284b41-c293-4f19-ab8b-ac5ec7383a4a" type="WSC:CONNECTIVITY, WSC:INVALID_WSDL">
+	
+	<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4d5dc2b7-4df5-4ca5-a484-4128bc095d54" type="APP:INVALID_DESTINATION">
+				<ee:transform doc:name="Transform Message" doc:id="5e0058e2-6aaf-4329-baba-bda9c0695a50">
+					<ee:message>
+						<ee:set-payload>
+							<![CDATA[%dw 2.0
+output application/JSON
+---
+{
+	"message": error.description
+}]]>
+						</ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="400" doc:name="httpStatus" doc:id="d5433bbf-298b-44e3-85d9-593bf2dd19d7" variableName="httpStatus" />
+			</on-error-continue>
+
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ee284b41-c293-4f19-ab8b-ac5ec7383a4a" type="WSC:CONNECTIVITY, WSC:INVALID_WSDL">
 			<ee:transform doc:name="Data unavailable" doc:id="4d542a74-f55f-471a-a529-28fcfa5f6552">
 				<ee:message>
 					<ee:set-payload><![CDATA[%dw 2.0
@@ -57,9 +74,10 @@ output application/json
 }]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
-		</on-error-propagate>
+			<set-variable value="500" doc:name="httpStatus" doc:id="e9f806be-a9fb-4257-9373-496b7a89f548" variableName="httpStatus"/>
+		</on-error-continue>
 	
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="12bdc897-39f4-44f9-a8e0-bb8ab92f4b29" type="ANY"> 
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="12bdc897-39f4-44f9-a8e0-bb8ab92f4b29" type="ANY"> 
 					<ee:transform doc:name="error.description" doc:id="c5f4b052-a259-4c0f-90c8-5977e7a1ad2f" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
@@ -70,7 +88,8 @@ output application/json
 }]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
-		</on-error-propagate>
+			<set-variable value="400" doc:name="httpStatus" doc:id="d5433bbf-298b-44e3-85d9-593bf2dd19d7" variableName="httpStatus" />
+		</on-error-continue>
 
 	</error-handler>
 </mule>
