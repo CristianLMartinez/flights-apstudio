@@ -37,7 +37,8 @@ flatten(payload..payload)]]></ee:set-payload>
 	</flow>
 	<flow name="getFlights" doc:id="5483f68f-72bd-4204-b4a3-f1897e384232" >
 		<http:listener doc:name="GET /flights" doc:id="d0eb2783-439f-4a82-bcbd-1dfb1162e362" config-ref="HTTP_Listener_config" path="/flights" >
-			<http:error-response >
+			<http:response statusCode="#[vars.httpStatus default 200]" />
+			<http:error-response statusCode="#[vars.httpStatus default 500]">
 				<http:body ><![CDATA[#[payload]]]></http:body>
 			</http:error-response>
 		</http:listener>
@@ -67,6 +68,34 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="ee464f8e-0923-465a-b9d9-ab27eef7b006" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="8424f600-2a7b-460b-8f3c-f8ea1d122b2b" type="AMERICAN-FLIGHTS-API:BAD_REQUEST">
+				<ee:transform doc:name="No flights" doc:id="20e0f011-39ae-4dd5-b75b-54758c516f2f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "No flights to: " ++ vars.code as String
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="200" doc:name="httpStatus" doc:id="a5ded77a-adb5-466e-8f01-af519be3f6ac" variableName="httpStatus"/>
+			</on-error-propagate>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4d5dc2b7-4df5-4ca5-a484-4128bc095d54" type="VALIDATION:INVALID_BOOLEAN">
+				<ee:transform doc:name="Transform Message" doc:id="5e0058e2-6aaf-4329-baba-bda9c0695a50" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/JSON
+---
+{
+	"message": error.description
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="400" doc:name="httpStatus" doc:id="d5433bbf-298b-44e3-85d9-593bf2dd19d7" variableName="httpStatus"/>
+			</on-error-continue>
+		</error-handler>
 	</flow>
 	<flow name="getAmericanFlights" doc:id="e13bbf17-613e-49f5-bdf7-8cb632269c5c">
 		<american-flights-api:get-flights doc:name="Get flights" doc:id="77a4ece7-446e-4b3a-8fcf-b21ed87c5aec" client-id="${american.client_id}" client-secret="${american.client_secret}" config-ref="American_Flights_API_Config" destination="#[vars.code]" />
