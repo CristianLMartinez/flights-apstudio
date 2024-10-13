@@ -40,7 +40,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		doc:name="Web Service Consumer Config"
 		doc:id="779530c1-56a5-4ad7-a87b-56daf5761363">
 		<wsc:connection wsdlLocation="${delta.wsdl}"
-			service="${delta.service}" port="${delta.port}" />
+			service="${delta.service}" port="${delta.port}" >
+			<reconnection >
+				<reconnect />
+			</reconnection>
+		</wsc:connection>
 	</wsc:config>
 	<configuration doc:name="Configuration"
 		doc:id="be420b27-51d2-4ed8-858d-53700beba98f"
