@@ -332,12 +332,45 @@ data: {
 		<ee:transform doc:name="Transform Message" doc:id="b2567653-b0f4-4dfa-84bb-657ed5beefe1" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/xml
+output application/dw
+
+import dasherize from dw::core::Strings
+
+// var numSeats = 400
+// var numSeats = (x = 400) -> x
+/* var numSeats = (planeType: String) -> 
+	if(planeType contains ('737'))
+		150
+	else 
+		300
+*/
+		
+fun numSeats (planeType: String) = do {
+	var maxSeats = if(planeType contains ('737'))
+		150
+	else 
+		300
+	---
+	maxSeats
+}
+
+type Currency = String {format: '###.00'}
+type Flight = Object {class: "com.mulesoft.training.Flight"}
+
 ---
-flights: payload..*return map (object, index) -> {
-	dest: object.destination,
-	price: object.price
-}]]></ee:set-payload>
+flights: (payload..*return map (object, index) -> {
+	destination: object.destination,
+	price: object.price as Number as Currency,
+//	availableSeats: numSeats(object.planeType as String),
+	avaialbleSeats: object.emptySeats as Number,
+	planeType: dasherize(replace(object.planeType, /(Boing)/) with "Boeing"),
+	departureDate: object.departureDate as Date {format: 'yyyy/MM/dd'} as String {format: 'MMM dd, yyyy'}
+} as Flight)
+distinctBy $
+filter ($.avaialbleSeats != 0)
+orderBy $.departureDate
+orderBy $.price
+]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="4eda8d8e-e1c7-4dfd-8118-014cec310934" />
