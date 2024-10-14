@@ -1,0 +1,13 @@
+http:
+  host: 'localhost'
+  port: '8081'
+
+database:
+  username: 'mule'
+  host: 'mudb.mule-training.com'
+  port: '3306'
+  password: 'mule'
+  db: 'training' 
+
+file:
+  accountsDir: 'C:/Users/cristian.lm/Documents/code/mulesoft/MAX-401-FILES/resources'

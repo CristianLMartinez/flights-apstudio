@@ -1,0 +1,30 @@
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+  <http:listener-config doc:id="962a64ee-daf4-4ad6-b732-5ab044fe8a34" doc:name="HTTP Listener config" name="GlobalConfigurations">
+    <http:listener-connection host="0.0.0.0" port="${http.port}"></http:listener-connection>
+  </http:listener-config>
+  <http:request-config doc:id="1fa8d8b4-99ac-4a6e-9470-d37107d2218b" doc:name="HTTP Request configuration" name="HTTP_Request_configuration">
+    <http:request-connection host="localhost" port="8081"></http:request-connection>
+  </http:request-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="c2bede92-9f6b-4e6a-b83f-6c4d2fb5df28" >
+		<vm:queues >
+			<vm:queue queueName="goodbye" />
+		</vm:queues>
+	</vm:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="0da4296e-290d-49b6-8ce8-40219b3f26be" file="config.yaml" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="277774f1-758a-4e5f-be77-236860dfd522" >
+		<db:my-sql-connection host="${database.host}" port="${database.port}" user="${database.username}" password="${database.password}" database="${database.db}" />
+	</db:config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="c89c5c89-881c-4265-89eb-89be391e43d5" >
+		<file:connection workingDir="${file.accountsDir}" />
+	</file:config>
+	<jms:config name="JMS_Config" doc:name="JMS Config" doc:id="5c29a20b-aa90-47e6-8c93-d6b620e45039" >
+		<jms:active-mq-connection >
+			<jms:factory-configuration />
+		</jms:active-mq-connection>
+	</jms:config>
+</mule>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="helloFlow" doc:id="185fe09a-84df-4759-bf89-7f46298f51da">
+		<http:listener doc:name="GET /hello" doc:id="81e136ca-0840-4012-8c86-8260223f750a" config-ref="GlobalConfigurations" path="/hello" allowedMethods="GET">
+			<http:response reasonPhrase="Success">
+				<http:headers><![CDATA[#[output application/java
+---
+{
+	"name" : "Max"
+}]]]>
+				</http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"name" : attributes.queryParams.fname
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+        <set-variable value="#[$1]" variableName="" doc:name="Set variable" doc:id="jppkkr" />
+		<set-payload value="Hello" doc:name="Hello" doc:id="462b6826-9554-481f-a4ab-0c8f2b2b00f2" />
+		<http:request method="GET" doc:name="GET /goodbye" doc:id="81137751-58b9-4093-b30e-54203c52d934" path="/goodbye" config-ref="HTTP_Request_configuration">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"fullName" : attributes.queryParams.fname
+}]]]>
+			</http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="payload" doc:id="8d7d9073-f042-4d36-b251-07f7b8bc277b" message="#['\nMessage: ' ++ payload]"/>
+	</flow>
+	<flow name="goodbyeFlow" doc:id="ee45f77d-ca56-4f4e-a525-bce333da1a92">
+		<http:listener doc:name="GET /goodbye" doc:id="6606f355-f4c4-488d-945b-4a3e0f0b9893" config-ref="GlobalConfigurations" path="/goodbye" allowedMethods="GET" />
+		<set-payload value="#[upper('Goodbye') ++ ' ' ++ (attributes.queryParams.fullName default &quot;Max Mule&quot; )]" doc:name="Set Payload" doc:id="b764254e-104b-45b8-9b14-1c2fb7e8eb0a" />
+		<logger level="DEBUG" doc:name="fullName" doc:id="2fc349a3-0384-4dfb-8b83-7908d0adedae" message="#[attributes.queryParams.fullName]"/>
+	</flow>
+</mule>
