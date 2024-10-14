@@ -27,4 +27,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 			<jms:factory-configuration />
 		</jms:active-mq-connection>
 	</jms:config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="e6944124-eccd-40dd-8bb7-1fb227a4febe" >
+		<salesforce:basic-connection username="cristianmartinez.realg-2crk@force.com" password="Dic.2024.iembre" securityToken="JZJSNo26DJtWqfP5Z6Isu705" />
+	</salesforce:sfdc-config>
 </mule>

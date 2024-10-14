@@ -2,6 +2,10 @@ http:
   host: 'localhost'
   port: '8081'
 
+salesforce:
+  username: 'cristianmartinez.realg@gmail.com'
+  password: 'Crst#105243'
+
 database:
   username: 'mule'
   host: 'mudb.mule-training.com'
